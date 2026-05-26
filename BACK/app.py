@@ -358,16 +358,17 @@ def editar(id):
 # START
 # =========================================
 
+
+with app.app_context():
+
+    DB.create_all()
+
+    crear_stock_inicial()
+
 if __name__ == '__main__':
-
-    with app.app_context():
-
-        DB.create_all()
-
-        crear_stock_inicial()
 
     app.run(
         host='0.0.0.0',
-        port=5000,
-        debug=True
+        port=5000
     )
+    
