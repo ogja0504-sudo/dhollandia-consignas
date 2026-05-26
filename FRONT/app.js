@@ -1,4 +1,4 @@
-const API = "http://192.168.0.86:5000"
+const API = "https://dhollandia-consignas.onrender.com"
 
 async function cargar(){
 
