@@ -1,0 +1,39 @@
+body{
+    background:#111;
+    color:white;
+    font-family:Arial;
+    padding:20px;
+}
+
+h1{
+    color:#00ff99;
+}
+
+input{
+    padding:10px;
+    margin:5px;
+    width:180px;
+}
+
+button{
+    padding:10px;
+    background:#00aa66;
+    color:white;
+    border:none;
+    cursor:pointer;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+td,th{
+    border:1px solid #333;
+    padding:10px;
+}
+
+.alerta{
+    background:red;
+}

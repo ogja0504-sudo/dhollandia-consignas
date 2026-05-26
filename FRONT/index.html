@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>DHOLLANDIA CONSIGNAS</title>
+
+<style>
+
+body{
+    background:#111;
+    color:white;
+    font-family:Arial;
+    margin:0;
+    padding:0;
+}
+
+#logoContainer{
+    background:#111;
+    text-align:center;
+    padding-top:20px;
+}
+
+#logo{
+    width:260px;
+    max-width:90%;
+}
+
+header{
+    background:#ff6600;
+    padding:15px;
+    text-align:center;
+    font-size:28px;
+    font-weight:bold;
+    color:white;
+    box-shadow:0 0 15px rgba(0,0,0,.5);
+}
+
+#filtros{
+    padding:20px;
+    background:#1b1b1b;
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+
+select{
+    padding:10px;
+    border:none;
+    border-radius:8px;
+    background:#222;
+    color:white;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+th{
+    background:#ff6600;
+    padding:12px;
+}
+
+td{
+    padding:10px;
+    border-bottom:1px solid #333;
+    text-align:center;
+}
+
+tr:hover{
+    background:#1f1f1f;
+}
+
+.bajo{
+    background:#5e0000;
+}
+
+button{
+    background:#ff6600;
+    border:none;
+    color:white;
+    padding:8px 15px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+button:hover{
+    opacity:.8;
+}
+
+#contenedor{
+    padding:20px;
+}
+
+#historial{
+    margin-top:40px;
+}
+
+.titulo{
+    font-size:24px;
+    margin-bottom:10px;
+    color:#ff6600;
+}
+
+.tarjetas{
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+    margin-bottom:20px;
+}
+
+.tarjeta{
+    background:#1b1b1b;
+    border-left:6px solid #ff6600;
+    padding:20px;
+    border-radius:12px;
+    min-width:200px;
+    flex:1;
+}
+
+.tarjeta h2{
+    margin:0;
+    font-size:18px;
+    color:#ff6600;
+}
+
+.tarjeta p{
+    font-size:30px;
+    margin-top:10px;
+    font-weight:bold;
+}
+
+input{
+    padding:10px;
+    border:none;
+    border-radius:8px;
+    background:#222;
+    color:white;
+    width:250px;
+}
+
+@media(max-width:700px){
+
+    table{
+        font-size:12px;
+    }
+
+    .tarjetas{
+        flex-direction:column;
+    }
+
+    input{
+        width:100%;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="logoContainer">
+
+    <img 
+        src="logo1.png"
+        id="logo"
+    >
+
+</div>
+
+<header>
+    CONTROL DE CONSIGNAS DHOLLANDIA
+</header>
+
+<div id="filtros">
+
+    <label>Ciudad:</label>
+
+    <select id="ciudadFiltro" onchange="filtrarCiudad()">
+
+        <option value="LEON">LEON</option>
+
+        <option value="QUERETARO">QUERETARO</option>
+
+        <option value="IZTAPALAPA">IZTAPALAPA</option>
+
+        <option value="REYES">REYES</option>
+
+        <option value="VALLEJO">VALLEJO</option>
+
+    </select>
+
+    <input 
+        type="text"
+        id="busqueda"
+        placeholder="Buscar código..."
+        onkeyup="buscarCodigo()"
+    >
+
+</div>
+
+<div id="contenedor">
+
+    <div class="tarjetas">
+
+        <div class="tarjeta">
+
+            <h2>TOTAL REFACCIONES</h2>
+
+            <p id="totalRefacciones">0</p>
+
+        </div>
+
+        <div class="tarjeta">
+
+            <h2>STOCK TOTAL</h2>
+
+            <p id="stockTotal">0</p>
+
+        </div>
+
+        <div class="tarjeta">
+
+            <h2>ALERTAS</h2>
+
+            <p id="alertas">0</p>
+
+        </div>
+
+    </div>
+
+    <div class="titulo">
+        STOCK
+    </div>
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>CIUDAD</th>
+
+                <th>CODIGO</th>
+
+                <th>DESCRIPCION</th>
+
+                <th>STOCK</th>
+
+                <th>MINIMO</th>
+
+                <th>MAXIMO</th>
+
+                <th>MOVIMIENTO</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody id="tablaStock">
+
+        </tbody>
+
+    </table>
+
+    <div id="historial">
+
+        <div class="titulo">
+            HISTORIAL
+        </div>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>FECHA</th>
+
+                    <th>CIUDAD</th>
+
+                    <th>CODIGO</th>
+
+                    <th>TIPO</th>
+
+                    <th>CANTIDAD</th>
+
+                    <th>OBSERVACIONES</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="tablaHistorial">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+
+let datosGlobales = []
+
+async function cargarStock(){
+
+    const respuesta = await fetch("http://127.0.0.1:5000/stock")
+
+    const datos = await respuesta.json()
+
+    datosGlobales = datos
+
+    actualizarTarjetas()
+
+    filtrarCiudad()
+
+}
+
+function actualizarTarjetas(){
+
+    document.getElementById("totalRefacciones").innerText = datosGlobales.length
+
+    let stockTotal = 0
+
+    let alertas = 0
+
+    datosGlobales.forEach(x => {
+
+        stockTotal += x.stock
+
+        if(x.stock <= x.minimo){
+
+            alertas++
+        }
+    })
+
+    document.getElementById("stockTotal").innerText = stockTotal
+
+    document.getElementById("alertas").innerText = alertas
+}
+
+function renderizar(datos){
+
+    const tabla = document.getElementById("tablaStock")
+
+    tabla.innerHTML = ""
+
+    datos.forEach(item => {
+
+        let clase = ""
+
+        if(item.stock <= item.minimo){
+
+            clase = "bajo"
+        }
+
+        tabla.innerHTML += `
+
+        <tr class="${clase}">
+
+            <td>${item.ciudad}</td>
+
+            <td>${item.codigo}</td>
+
+            <td>${item.descripcion}</td>
+
+            <td>${item.stock}</td>
+
+            <td>${item.minimo}</td>
+
+            <td>${item.maximo}</td>
+
+            <td>
+
+                <button onclick="movimiento(${item.id}, 'ENTRADA')">+</button>
+
+                <button onclick="movimiento(${item.id}, 'SALIDA')">-</button>
+
+            </td>
+
+        </tr>
+
+        `
+    })
+}
+
+function filtrarCiudad(){
+
+    const ciudad = document.getElementById("ciudadFiltro").value
+
+    const filtrado = datosGlobales.filter(
+        x => x.ciudad == ciudad
+    )
+
+    renderizar(filtrado)
+}
+
+function buscarCodigo(){
+
+    const texto = document
+        .getElementById("busqueda")
+        .value
+        .toLowerCase()
+
+    const ciudad = document.getElementById("ciudadFiltro").value
+
+    const filtrado = datosGlobales.filter(x =>
+
+        x.ciudad == ciudad &&
+
+        x.codigo.toLowerCase().includes(texto)
+    )
+
+    renderizar(filtrado)
+}
+
+async function movimiento(id, tipo){
+
+    let cantidad = prompt("Cantidad")
+
+    if(!cantidad){
+
+        return
+    }
+
+    let observaciones = prompt("Observaciones")
+
+    await fetch("http://127.0.0.1:5000/movimiento",{
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+            id:id,
+
+            tipo:tipo,
+
+            cantidad:cantidad,
+
+            observaciones:observaciones
+        })
+    })
+
+    cargarStock()
+
+    cargarHistorial()
+}
+
+async function cargarHistorial(){
+
+    const respuesta = await fetch("http://127.0.0.1:5000/historial")
+
+    const datos = await respuesta.json()
+
+    const tabla = document.getElementById("tablaHistorial")
+
+    tabla.innerHTML = ""
+
+    datos.forEach(item => {
+
+        tabla.innerHTML += `
+
+        <tr>
+
+            <td>${item.fecha}</td>
+
+            <td>${item.ciudad}</td>
+
+            <td>${item.codigo}</td>
+
+            <td>${item.tipo}</td>
+
+            <td>${item.cantidad}</td>
+
+            <td>${item.observaciones}</td>
+
+        </tr>
+
+        `
+    })
+}
+
+cargarStock()
+
+cargarHistorial()
+
+</script>
+
+</body>
+
+</html>
