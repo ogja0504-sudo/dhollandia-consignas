@@ -386,6 +386,8 @@ function renderizar(datos){
                 <button onclick="movimiento(${item.id}, 'ENTRADA')">+</button>
 
                 <button onclick="movimiento(${item.id}, 'SALIDA')">-</button>
+                <button onclick="editarRefaccion(${item.id}, ${item.stock}, ${item.minimo}, ${item.maximo})">EDITAR</button>
+                
 
             </td>
 
@@ -498,6 +500,43 @@ async function cargarHistorial(){
 cargarStock()
 
 cargarHistorial()
+async function editarRefaccion(id, stockActual, minimoActual, maximoActual){
+
+    const nuevoStock = prompt("Nuevo stock:", stockActual)
+
+    if(nuevoStock === null) return
+
+    const nuevoMinimo = prompt("Nuevo mínimo:", minimoActual)
+
+    if(nuevoMinimo === null) return
+
+    const nuevoMaximo = prompt("Nuevo máximo:", maximoActual)
+
+    if(nuevoMaximo === null) return
+
+    await fetch("https://dhollandia-consignas.onrender.com/editar/" + id, {
+
+        method: "PUT",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+
+            stock: parseInt(nuevoStock),
+
+            minimo: parseInt(nuevoMinimo),
+
+            maximo: parseInt(nuevoMaximo)
+
+        })
+
+    })
+
+    cargarStock()
+
+}
 
 </script>
 
