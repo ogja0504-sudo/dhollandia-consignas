@@ -315,7 +315,7 @@ let datosGlobales = []
 
 async function cargarStock(){
 
-    const respuesta = await fetch("http://127.0.0.1:5000/stock")
+    const respuesta = await fetch("https://dhollandia-consignas.onrender.com/stock")
 
     const datos = await respuesta.json()
 
