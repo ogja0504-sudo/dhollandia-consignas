@@ -438,7 +438,7 @@ async function movimiento(id, tipo){
 
     let observaciones = prompt("Observaciones")
 
-    await fetch("http://127.0.0.1:5000/movimiento",{
+    await fetch("https://dhollandia-consignas.onrender.com",{
 
         method:"POST",
 
@@ -465,7 +465,7 @@ async function movimiento(id, tipo){
 
 async function cargarHistorial(){
 
-    const respuesta = await fetch("http://127.0.0.1:5000/historial")
+    const respuesta = await fetch("https://dhollandia-consignas.onrender.com/historial")
 
     const datos = await respuesta.json()
 
