@@ -13,7 +13,7 @@ app = Flask(__name__)
 
 CORS(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///consignas.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres.ybqeosuunwyajpzokzxl:OVALLEGARCIA0206@aws-1-us-east-1.pooler.supabase.com:6543/postgres'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 DB = SQLAlchemy(app)
