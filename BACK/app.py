@@ -363,7 +363,7 @@ with app.app_context():
 
     DB.create_all()
 
-    crear_stock_inicial()
+   
 
 if __name__ == '__main__':
 
